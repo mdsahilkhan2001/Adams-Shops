@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #ffffff;
+  color: #111111;
+  line-height: 1.6;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.lux-container {
+  @apply mx-auto w-full max-w-7xl px-6;
+}
+
+.section-title {
+  @apply font-display text-3xl md:text-4xl tracking-wide;
+  color: #111111;
+}
+
+.section-subtitle {
+  @apply text-sand text-sm uppercase tracking-[0.3em];
+}
+
+.gold-underline {
+  position: relative;
+}
+
+.gold-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -12px;
+  width: 84px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(122,31,43,1) 0%, rgba(122,31,43,0) 100%);
+}
+
+.lux-button {
+  @apply inline-flex items-center justify-center rounded-full bg-gold px-6 py-3 text-white font-semibold tracking-wide transition duration-300;
+  box-shadow: 0 12px 30px rgba(122,31,43,0.18);
+}
+
+.lux-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(122,31,43,0.25);
+}
+
+.lux-outline {
+  @apply inline-flex items-center justify-center rounded-full border border-black/20 px-6 py-3 text-black font-medium tracking-wide transition duration-300;
+  backdrop-filter: blur(10px);
+}
+
+.lux-outline:hover {
+  border-color: rgba(17,17,17,0.6);
+  color: #111111;
+  background-color: rgba(17,17,17,0.03);
+}
+
+.lux-card {
+  @apply rounded-3xl border border-black/10 bg-white p-6 shadow-soft;
+}
+
+.pattern-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(122,31,43,0.08) 0, transparent 45%),
+    radial-gradient(circle at 70% 60%, rgba(17,17,17,0.05) 0, transparent 55%),
+    repeating-linear-gradient(45deg, rgba(17,17,17,0.03) 0 1px, transparent 1px 18px);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.glass-panel {
+  @apply rounded-3xl border border-black/10 bg-white p-8 shadow-soft;
+}
+
+.badge {
+  @apply inline-flex items-center rounded-full border border-gold/50 px-4 py-1 text-xs uppercase tracking-[0.2em] text-gold;
+}
+
+.lux-gradient {
+  background: linear-gradient(135deg, rgba(122,31,43,0.08) 0%, rgba(255,255,255,1) 55%, rgba(248,246,244,1) 100%);
+}
+
+.hero-glow {
+  box-shadow: 0 12px 40px rgba(17,17,17,0.1);
+}
+
+.marquee {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-track {
+  display: inline-flex;
+  gap: 3rem;
+  align-items: center;
+  animation: marquee 20s linear infinite;
+}
+
+.marquee-item {
+  @apply uppercase tracking-[0.35em] text-xs text-current;
+}
+
+.lux-border {
+  border: 1px solid rgba(17, 17, 17, 0.08);
+}
+
+.lux-ring {
+  box-shadow: inset 0 0 0 1px rgba(17, 17, 17, 0.08);
+}
+
+.pattern-grid {
+  background-image: radial-gradient(circle at 1px 1px, rgba(17,17,17,0.03) 1px, transparent 0);
+  background-size: 18px 18px;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 2rem;
+  }
+}
