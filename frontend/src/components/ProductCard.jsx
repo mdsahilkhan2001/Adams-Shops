@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "../store/cartSlice.js";
 import { toggleWishlist } from "../store/wishlistSlice.js";
 import { formatPrice, getPrimaryImage } from "../utils/format.js";
+import ImageWithFallback from "./ImageWithFallback.jsx";
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
@@ -16,7 +17,7 @@ const ProductCard = ({ product }) => {
       className="group relative overflow-hidden rounded-3xl border border-black/10 bg-white"
     >
       <div className="relative overflow-hidden">
-        <img
+        <ImageWithFallback
           src={image}
           alt={product.name}
           className="h-64 w-full object-cover transition duration-500 group-hover:scale-110"
