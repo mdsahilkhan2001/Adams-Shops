@@ -49,6 +49,14 @@ class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
     pagination_class = None
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(is_hidden=False)
+
+    def perform_destroy(self, instance):
+        instance.is_hidden = True
+        instance.save(update_fields=["is_hidden"])
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.prefetch_related("images").all()
@@ -58,6 +66,14 @@ class ProductViewSet(viewsets.ModelViewSet):
     filterset_class = ProductFilter
     search_fields = ["name", "description", "category__name"]
     ordering_fields = ["price", "created_at"]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(is_active=True)
+
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save(update_fields=["is_active"])
 
     @action(detail=True, methods=["get"])
     def reviews(self, request, pk=None):
@@ -208,6 +224,16 @@ class ProductImageViewSet(viewsets.ModelViewSet):
     queryset = ProductImage.objects.all()
     serializer_class = ProductImageSerializer
     permission_classes = [IsAdminOrReadOnly]
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        if instance.is_primary:
+            ProductImage.objects.filter(product=instance.product).exclude(pk=instance.pk).update(is_primary=False)
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        if instance.is_primary:
+            ProductImage.objects.filter(product=instance.product).exclude(pk=instance.pk).update(is_primary=False)
 
 
 class MeView(APIView):
