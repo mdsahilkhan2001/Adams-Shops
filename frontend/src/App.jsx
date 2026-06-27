@@ -1,8 +1,12 @@
 import { Suspense, lazy, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Layout from "./components/Layout.jsx";
 import AdminRoute from "./components/admin/AdminRoute.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import { useLazyRefreshTokenQuery } from "./store/authApi.js";
+import { setCredentials } from "./store/authSlice.js";
 import PageLoader from "./components/PageLoader.jsx";
 
 const Home = lazy(() => import("./pages/Home.jsx"));
@@ -13,11 +17,27 @@ const Cart = lazy(() => import("./pages/Cart.jsx"));
 const Checkout = lazy(() => import("./pages/Checkout.jsx"));
 const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage.jsx"));
+
+// Admin Pages
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin.jsx"));
+const AdminForgotPassword = lazy(() => import("./pages/admin/AdminForgotPassword.jsx"));
+const AdminChangePassword = lazy(() => import("./pages/admin/AdminChangePassword.jsx"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard.jsx"));
 const AdminProducts = lazy(() => import("./pages/admin/AdminProducts.jsx"));
 const AdminCategories = lazy(() => import("./pages/admin/AdminCategories.jsx"));
 const AdminOrders = lazy(() => import("./pages/admin/AdminOrders.jsx"));
+const AdminCustomers = lazy(() => import("./pages/admin/AdminCustomers.jsx"));
+const AdminReviews = lazy(() => import("./pages/admin/AdminReviews.jsx"));
+const AdminCoupons = lazy(() => import("./pages/admin/AdminCoupons.jsx"));
+const AdminInventory = lazy(() => import("./pages/admin/AdminInventory.jsx"));
+const AdminReports = lazy(() => import("./pages/admin/AdminReports.jsx"));
+const Login = lazy(() => import("./pages/auth/Login.jsx"));
+const Register = lazy(() => import("./pages/auth/Register.jsx"));
+const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword.jsx"));
+const ResetPassword = lazy(() => import("./pages/auth/ResetPassword.jsx"));
+const VerifyEmail = lazy(() => import("./pages/auth/VerifyEmail.jsx"));
+const Profile = lazy(() => import("./pages/auth/Profile.jsx"));
+const ChangePassword = lazy(() => import("./pages/auth/ChangePassword.jsx"));
 
 const ScrollToTop = () => {
   const location = useLocation();
@@ -31,13 +51,46 @@ const ScrollToTop = () => {
 
 const App = () => {
   const location = useLocation();
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const [triggerRefreshToken] = useLazyRefreshTokenQuery();
+
+  useEffect(() => {
+    if (!token) {
+      triggerRefreshToken()
+        .unwrap()
+        .then((data) => {
+          dispatch(setCredentials({ token: data.accessToken, user: data.user }));
+        })
+        .catch(() => {
+          // Silent failure when no active refresh session exists
+        });
+    }
+  }, [token, triggerRefreshToken, dispatch]);
 
   return (
     <AnimatePresence mode="wait">
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes location={location} key={location.pathname}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          } />
+          <Route path="/change-password" element={
+            <ProtectedRoute>
+              <ChangePassword />
+            </ProtectedRoute>
+          } />
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
+          <Route path="/admin/change-password" element={<AdminChangePassword />} />
           <Route
             path="/admin/dashboard"
             element={
@@ -67,6 +120,46 @@ const App = () => {
             element={
               <AdminRoute>
                 <AdminOrders />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/customers"
+            element={
+              <AdminRoute>
+                <AdminCustomers />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/reviews"
+            element={
+              <AdminRoute>
+                <AdminReviews />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/coupons"
+            element={
+              <AdminRoute>
+                <AdminCoupons />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/inventory"
+            element={
+              <AdminRoute>
+                <AdminInventory />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/reports"
+            element={
+              <AdminRoute>
+                <AdminReports />
               </AdminRoute>
             }
           />

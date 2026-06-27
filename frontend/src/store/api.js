@@ -1,7 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getApiBaseUrl } from "../utils/urls.js";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_URL || "http://localhost:8000/api",
+  baseUrl: getApiBaseUrl(),
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.token;
     if (token) {
@@ -14,14 +15,16 @@ const baseQuery = fetchBaseQuery({
 export const api = createApi({
   reducerPath: "api",
   baseQuery,
-  tagTypes: ["Products", "Categories", "Orders", "Cart", "Wishlist", "Reviews", "User"],
+  tagTypes: ["Products", "Categories", "Orders", "Cart", "Wishlist", "Reviews", "User", "Dashboard"],
   endpoints: (builder) => ({
     getProducts: builder.query({
       query: (params) => ({ url: "/products/", params }),
-      providesTags: (result) =>
-        result
-          ? [...result.map((product) => ({ type: "Products", id: product.id })), "Products"]
-          : ["Products"]
+      providesTags: (result) => {
+        const products = Array.isArray(result) ? result : result?.results || [];
+        return products.length
+          ? [...products.map((product) => ({ type: "Products", id: product.id })), "Products"]
+          : ["Products"];
+      }
     }),
     getProduct: builder.query({
       query: (id) => `/products/${id}/`,
@@ -51,13 +54,17 @@ export const api = createApi({
       query: () => "/orders/analytics/",
       providesTags: ["Orders"]
     }),
+    getDashboardStats: builder.query({
+      query: () => "/admin/dashboard/stats/",
+      providesTags: ["Dashboard"]
+    }),
     checkout: builder.mutation({
       query: (payload) => ({
         url: "/orders/checkout/",
         method: "POST",
         body: payload
       }),
-      invalidatesTags: ["Orders", "Cart"]
+      invalidatesTags: ["Orders", "Cart", "Dashboard"]
     }),
     updateOrder: builder.mutation({
       query: ({ id, ...payload }) => ({
@@ -65,7 +72,7 @@ export const api = createApi({
         method: "PATCH",
         body: payload
       }),
-      invalidatesTags: ["Orders"]
+      invalidatesTags: ["Orders", "Dashboard"]
     }),
     getAddresses: builder.query({
       query: () => "/addresses/",
@@ -103,7 +110,7 @@ export const api = createApi({
         method: "POST",
         body: payload
       }),
-      invalidatesTags: ["Products"]
+      invalidatesTags: ["Products", "Dashboard"]
     }),
     updateProduct: builder.mutation({
       query: ({ id, ...payload }) => ({
@@ -111,14 +118,14 @@ export const api = createApi({
         method: "PATCH",
         body: payload
       }),
-      invalidatesTags: ["Products"]
+      invalidatesTags: ["Products", "Dashboard"]
     }),
     deleteProduct: builder.mutation({
       query: (id) => ({
         url: `/products/${id}/`,
         method: "DELETE"
       }),
-      invalidatesTags: ["Products"]
+      invalidatesTags: ["Products", "Dashboard"]
     }),
     createCategory: builder.mutation({
       query: (payload) => ({
@@ -126,7 +133,7 @@ export const api = createApi({
         method: "POST",
         body: payload
       }),
-      invalidatesTags: ["Categories"]
+      invalidatesTags: ["Categories", "Dashboard"]
     }),
     updateCategory: builder.mutation({
       query: ({ id, ...payload }) => ({
@@ -134,14 +141,14 @@ export const api = createApi({
         method: "PATCH",
         body: payload
       }),
-      invalidatesTags: ["Categories"]
+      invalidatesTags: ["Categories", "Dashboard"]
     }),
     deleteCategory: builder.mutation({
       query: (id) => ({
         url: `/categories/${id}/`,
         method: "DELETE"
       }),
-      invalidatesTags: ["Categories"]
+      invalidatesTags: ["Categories", "Dashboard"]
     }),
     createProductImage: builder.mutation({
       query: (payload) => ({
@@ -149,7 +156,25 @@ export const api = createApi({
         method: "POST",
         body: payload
       }),
-      invalidatesTags: ["Products"]
+      invalidatesTags: ["Products", "Dashboard"]
+    }),
+    deleteProductImage: builder.mutation({
+      query: (id) => ({
+        url: `/product-images/${id}/`,
+        method: "DELETE"
+      }),
+      invalidatesTags: ["Products", "Dashboard"]
+    }),
+    uploadImage: builder.mutation({
+      query: ({ file }) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        return {
+          url: "/admin/uploads/image/",
+          method: "POST",
+          body: formData
+        };
+      }
     })
   })
 });
@@ -163,6 +188,7 @@ export const {
   useGetWishlistQuery,
   useGetOrdersQuery,
   useGetOrderAnalyticsQuery,
+  useGetDashboardStatsQuery,
   useCheckoutMutation,
   useUpdateOrderMutation,
   useGetAddressesQuery,
@@ -177,5 +203,7 @@ export const {
   useCreateCategoryMutation,
   useUpdateCategoryMutation,
   useDeleteCategoryMutation,
-  useCreateProductImageMutation
+  useCreateProductImageMutation,
+  useDeleteProductImageMutation,
+  useUploadImageMutation
 } = api;

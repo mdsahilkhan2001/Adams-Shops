@@ -2,7 +2,16 @@ import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import { useGetOrdersQuery, useUpdateOrderMutation } from "../../store/api.js";
 import { normalizeProductsResponse } from "../../utils/format.js";
 
-const statusOptions = ["pending", "processing", "shipped", "delivered"];
+const statusOptions = [
+  { value: "pending", label: "Pending" },
+  { value: "confirmed", label: "Confirmed" },
+  { value: "packed", label: "Packed" },
+  { value: "shipped", label: "Shipped" },
+  { value: "delivered", label: "Delivered" },
+  { value: "cancelled", label: "Cancelled" },
+  { value: "refunded", label: "Refunded" },
+  { value: "returned", label: "Returned" }
+];
 
 const AdminOrders = () => {
   const { data: orders } = useGetOrdersQuery();
@@ -38,8 +47,8 @@ const AdminOrders = () => {
                   className="rounded-full border border-black/10 bg-white px-3 py-1 text-ink"
                 >
                   {statusOptions.map((status) => (
-                    <option key={status} value={status}>
-                      {status}
+                    <option key={status.value} value={status.value}>
+                      {status.label}
                     </option>
                   ))}
                 </select>

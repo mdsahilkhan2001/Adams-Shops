@@ -1,4 +1,9 @@
+from urllib.parse import urlparse
+
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.files.storage import default_storage
+from django.utils.text import slugify
 from rest_framework import serializers
 from .models import (
     Category,
@@ -17,18 +22,97 @@ from .models import (
 User = get_user_model()
 
 
+def _media_url_prefix():
+    media_url = getattr(settings, "MEDIA_URL", "/media/") or "/media/"
+    return media_url if media_url.startswith("/") else f"/{media_url}"
+
+
+def normalize_stored_image_path(value):
+    if not value:
+        return ""
+
+    raw = str(value).strip()
+    if not raw:
+        return ""
+
+    if raw.startswith(("http://", "https://")):
+        parsed = urlparse(raw)
+        media_url = _media_url_prefix()
+        if parsed.path.startswith(media_url):
+            raw = parsed.path[len(media_url):]
+        else:
+            return raw
+
+    media_url = _media_url_prefix()
+    for prefix in (media_url, media_url.lstrip("/")):
+        if raw.startswith(prefix):
+            raw = raw[len(prefix):]
+            break
+
+    return raw.lstrip("/")
+
+
+def resolve_stored_image_url(value, request=None):
+    if not value:
+        return ""
+
+    raw = str(value).strip()
+    if not raw:
+        return ""
+
+    if raw.startswith(("http://", "https://")):
+        return raw
+
+    media_path = default_storage.url(normalize_stored_image_path(raw))
+    if request is not None:
+        try:
+            return request.build_absolute_uri(media_path)
+        except Exception:
+            return media_path
+    return media_path
+
+
+class StoredImagePathField(serializers.CharField):
+    def to_internal_value(self, data):
+        value = super().to_internal_value(data)
+        return normalize_stored_image_path(value)
+
+    def to_representation(self, value):
+        request = self.context.get("request")
+        return resolve_stored_image_url(value, request)
+
+
 class CategorySerializer(serializers.ModelSerializer):
-    image = serializers.CharField(source="image_url", read_only=True)
+    image_url = StoredImagePathField(required=False, allow_blank=True, allow_null=True)
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
-        fields = "__all__"
+        fields = [
+            "id",
+            "name",
+            "slug",
+            "description",
+            "image_url",
+            "banner_image_url",
+            "seo_title",
+            "seo_description",
+            "display_order",
+            "is_hidden",
+            "parent_category",
+            "image",
+        ]
+
+    def get_image(self, obj):
+        return resolve_stored_image_url(obj.image_url, self.context.get("request"))
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
+    image_url = StoredImagePathField(required=False, allow_blank=True, allow_null=True)
+
     class Meta:
         model = ProductImage
-        fields = ["id", "image_url", "alt_text", "is_primary"]
+        fields = ["id", "product", "image_url", "alt_text", "is_primary"]
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -57,8 +141,19 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
 
     def get_image(self, obj):
-        primary = obj.images.filter(is_primary=True).first() or obj.images.first()
-        return primary.image_url if primary else ""
+        images = list(obj.images.all())
+        primary = next((image for image in images if image.is_primary), None) or (images[0] if images else None)
+        if not primary:
+            return ""
+        return resolve_stored_image_url(primary.image_url, self.context.get("request"))
+
+    def create(self, validated_data):
+        # The admin product form does not expose SKU, so derive a stable fallback.
+        validated_data.setdefault(
+            "sku",
+            slugify(validated_data.get("slug") or validated_data.get("name") or "product")
+        )
+        return super().create(validated_data)
 
 
 class ReviewSerializer(serializers.ModelSerializer):

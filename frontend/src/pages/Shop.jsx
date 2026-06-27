@@ -5,10 +5,13 @@ import ProductCard from "../components/ProductCard.jsx";
 import { categories, products as mockProducts } from "../data/mockData.js";
 import { useGetCategoriesQuery, useGetProductsQuery } from "../store/api.js";
 import { normalizeProductsResponse } from "../utils/format.js";
+import { useLocalProducts } from "../hooks/useLocalProducts.js";
+import { mergeProducts, productMatchesFilters } from "../utils/localProducts.js";
 
 const Shop = () => {
   const pageSize = 12;
   const { data: apiCategories } = useGetCategoriesQuery();
+  const localProducts = useLocalProducts();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [minPrice, setMinPrice] = useState("");
@@ -44,30 +47,17 @@ const Shop = () => {
   }, [search, activeCategory, minPrice, maxPrice, ordering]);
 
   const { items: apiProducts, count, next, previous } = normalizeProductsResponse(data);
-  const products = !isError ? apiProducts : mockProducts;
+  const products = mergeProducts(localProducts, !isError ? apiProducts : mockProducts);
   const categoryList = apiCategories?.length ? apiCategories : categories;
   const useApiResults = !isError;
 
   const filtered = useMemo(() => {
-    if (useApiResults) {
-      return products;
-    }
-    return products.filter((product) => {
-      const categorySlug = product.slug || (product.category || "").toLowerCase().replace(/\s+/g, "-");
-      const categoryName = product.category_name || product.category;
-      const matchesCategory =
-        activeCategory === "all" ||
-        categorySlug === activeCategory ||
-        categoryName === activeCategory;
-      const matchesSearch = product.name?.toLowerCase().includes(search.toLowerCase());
-      const priceValue = Number(product.price) || 0;
-      const matchesMin = minPrice ? priceValue >= Number(minPrice) : true;
-      const matchesMax = maxPrice ? priceValue <= Number(maxPrice) : true;
-      return matchesCategory && matchesSearch && matchesMin && matchesMax;
-    });
-  }, [products, search, activeCategory, minPrice, maxPrice, useApiResults]);
+    return products.filter((product) =>
+      productMatchesFilters(product, { search, activeCategory, minPrice, maxPrice })
+    );
+  }, [products, search, activeCategory, minPrice, maxPrice]);
 
-  const totalPages = count ? Math.ceil(count / pageSize) : 1;
+  const totalPages = count ? Math.ceil((count + localProducts.length) / pageSize) : 1;
 
   return (
     <div className="lux-container py-16 space-y-10">
