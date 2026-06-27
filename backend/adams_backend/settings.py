@@ -104,6 +104,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
+        "store.permissions.NodeAccessTokenAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticatedOrReadOnly",),
@@ -127,6 +128,9 @@ CORS_ALLOWED_ORIGINS = os.getenv(
 
 # Allow any local dev port (Vite may switch ports if busy)
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^http://localhost:\\d+$",
-    r"^http://127\\.0\\.0\\.1:\\d+$",
+    r"^http://localhost:\d+$",
+    r"^http://127\.0\.0\.1:\d+$",
+    r"^http://10\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+$",
+    r"^http://192\.168\.\d{1,3}\.\d{1,3}:\d+$",
+    r"^http://172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}:\d+$",
 ]

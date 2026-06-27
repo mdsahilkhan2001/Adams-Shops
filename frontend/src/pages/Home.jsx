@@ -13,12 +13,20 @@ import CategoryCard from "../components/CategoryCard.jsx";
 import ProductCard from "../components/ProductCard.jsx";
 import { useGetCategoriesQuery, useGetProductsQuery } from "../store/api.js";
 import { normalizeProductsResponse } from "../utils/format.js";
+import { useLocalProducts } from "../hooks/useLocalProducts.js";
+import { mergeProducts } from "../utils/localProducts.js";
 
 const Home = () => {
   const { data: apiProducts } = useGetProductsQuery({ is_best_seller: true, page_size: 8 });
+  const { data: featuredProductData } = useGetProductsQuery({ is_featured: true, page_size: 8 });
   const { data: apiCategories } = useGetCategoriesQuery();
+  const localProducts = useLocalProducts();
   const apiBest = normalizeProductsResponse(apiProducts).items;
-  const bestSellingProducts = apiBest.length ? apiBest : bestSelling;
+  const apiFeaturedProducts = normalizeProductsResponse(featuredProductData).items;
+  const localBest = localProducts.filter((product) => product.is_best_seller);
+  const localFeatured = localProducts.filter((product) => product.is_featured);
+  const bestSellingProducts = mergeProducts(localBest, apiBest.length ? apiBest : bestSelling);
+  const featuredProducts = mergeProducts(localFeatured, apiFeaturedProducts);
   const featuredCategories = apiCategories?.length ? apiCategories.slice(0, 12) : categories;
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
@@ -161,12 +169,14 @@ const Home = () => {
         <SectionHeader
           eyebrow="Categories"
           title="Featured Collections"
-          description="Explore signature categories curated for modest luxury living."
+          description="Explore signature pieces and categories curated for modest luxury living."
         />
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {featuredCategories.map((category) => (
-            <CategoryCard key={category.id} category={category} />
-          ))}
+          {featuredProducts.length
+            ? featuredProducts.map((product) => <ProductCard key={product.id} product={product} />)
+            : featuredCategories.map((category) => (
+                <CategoryCard key={category.id} category={category} />
+              ))}
         </div>
       </section>
 

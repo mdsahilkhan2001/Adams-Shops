@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useGetMeQuery } from "../../store/api.js";
+import { useGetMeQuery } from "../../store/authApi.js";
 
 const AdminRoute = ({ children }) => {
   const token = useSelector((state) => state.auth.token);
@@ -20,7 +20,7 @@ const AdminRoute = ({ children }) => {
     );
   }
 
-  if (isError || !data?.is_staff) {
+  if (isError || !data || !["admin", "superadmin"].includes(data.role)) {
     return <Navigate to="/admin/login" replace />;
   }
 

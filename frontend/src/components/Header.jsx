@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { Heart, Search, ShoppingBag, User, ShieldCheck, Menu, X } from "lucide-react";
 
 const menuItems = [
@@ -22,6 +23,7 @@ const menuItems = [
 
 const Header = ({ cartCount }) => {
   const [open, setOpen] = useState(false);
+  const token = useSelector((state) => state.auth.token);
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-black/10">
@@ -74,9 +76,20 @@ const Header = ({ cartCount }) => {
           >
             <ShieldCheck size={18} />
           </Link>
-          <Link to="/account" className="p-2 rounded-full border border-black/10 hover:border-gold/40" aria-label="Account">
-            <User size={18} />
-          </Link>
+          {!token ? (
+            <>
+              <Link to="/login" className="rounded-full border border-black/10 px-4 py-2 text-sm uppercase tracking-[0.2em] text-slate-600 hover:border-gold/40 hover:text-gold">
+                Login
+              </Link>
+              <Link to="/register" className="rounded-full border border-black/10 bg-gold px-4 py-2 text-sm uppercase tracking-[0.2em] text-white hover:bg-gold/90">
+                Register
+              </Link>
+            </>
+          ) : (
+            <Link to="/account" className="rounded-full border border-black/10 px-4 py-2 text-sm uppercase tracking-[0.2em] text-slate-600 hover:border-gold/40 hover:text-gold">
+              Account
+            </Link>
+          )}
           <button className="p-2 rounded-full border border-black/10 hover:border-gold/40" aria-label="Wishlist">
             <Heart size={18} />
           </button>
@@ -109,9 +122,20 @@ const Header = ({ cartCount }) => {
               </NavLink>
             ))}
             <div className="flex flex-wrap gap-3 pt-2">
-              <Link to="/account" className="rounded-full border border-black/10 px-4 py-3 text-sm uppercase tracking-[0.3em] text-sand" onClick={() => setOpen(false)}>
-                Account
-              </Link>
+              {!token ? (
+                <>
+                  <Link to="/login" className="rounded-full border border-black/10 px-4 py-3 text-sm uppercase tracking-[0.3em] text-sand" onClick={() => setOpen(false)}>
+                    Login
+                  </Link>
+                  <Link to="/register" className="rounded-full border border-black/10 px-4 py-3 text-sm uppercase tracking-[0.3em] text-sand" onClick={() => setOpen(false)}>
+                    Register
+                  </Link>
+                </>
+              ) : (
+                <Link to="/account" className="rounded-full border border-black/10 px-4 py-3 text-sm uppercase tracking-[0.3em] text-sand" onClick={() => setOpen(false)}>
+                  Account
+                </Link>
+              )}
               <Link to="/cart" className="rounded-full border border-black/10 px-4 py-3 text-sm uppercase tracking-[0.3em] text-sand" onClick={() => setOpen(false)}>
                 Cart
               </Link>
