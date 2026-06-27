@@ -1,87 +1,91 @@
+import abayaImg from "../../images/abaya.jpg";
+import abayaInnersImg from "../../images/Abaya Inners.jpg";
+import hijabsImg from "../../images/Hijabs.jpg";
+import stolesImg from "../../images/Stoles.jpg";
+import jilbabsImg from "../../images/Jilbabs.jpg";
+import hijabAccessoriesImg from "../../images/Hijab Accessories.jpg";
+import mensKurtasImg from "../../images/Men's Kurtas.jpg";
+import thobesImg from "../../images/Thobes.jpg";
+import pakistaniPathaniImg from "../../images/Pakistani Pathani.jpg";
+import kidsThobesImg from "../../images/Kids Thobes.jpg";
+import perfumesAttarsImg from "../../images/Middle East Perfumes & Attars.jpg";
+import hajjUmrahEssentialsImg from "../../images/Hajj & Umrah Essentials.jpg";
+import ramzanAbayaCollectionImg from "../../images/Ramzan Abaya Collection.jpg";
+import luxuryHijabCollectionImg from "../../images/Luxury Hijab Collection.jpg";
+import umrahEssentialsImg from "../../images/Umrah Essentials.jpg";
+
 export const categories = [
   {
     id: 1,
     name: "Abayas",
     slug: "abayas",
-    image:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80&fm=webp"
+    image: abayaImg
   },
   {
     id: 2,
     name: "Abaya Inners",
     slug: "abaya-inners",
-    image:
-      "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80&fm=webp"
+    image: abayaInnersImg
   },
   {
     id: 3,
     name: "Hijabs",
     slug: "hijabs",
-    image:
-      "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=900&q=80&fm=webp"
+    image: hijabsImg
   },
   {
     id: 4,
     name: "Stoles",
     slug: "stoles",
-    image:
-      "https://images.unsplash.com/photo-1487412912498-0447578fcca8?auto=format&fit=crop&w=900&q=80&fm=webp"
+    image: stolesImg
   },
   {
     id: 5,
     name: "Jilbabs",
     slug: "jilbabs",
-    image:
-      "https://images.unsplash.com/photo-1467043237213-65f2da53396f?auto=format&fit=crop&w=900&q=80&fm=webp"
+    image: jilbabsImg
   },
   {
     id: 6,
     name: "Hijab Accessories",
     slug: "hijab-accessories",
-    image:
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=80&fm=webp"
+    image: hijabAccessoriesImg
   },
   {
     id: 7,
     name: "Men's Kurtas",
     slug: "mens-kurtas",
-    image:
-      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=900&q=80&fm=webp"
+    image: mensKurtasImg
   },
   {
     id: 8,
     name: "Thobes",
     slug: "thobes",
-    image:
-      "https://images.unsplash.com/photo-1503342394128-c104d54dba01?auto=format&fit=crop&w=900&q=80&fm=webp"
+    image: thobesImg
   },
   {
     id: 9,
     name: "Pakistani Pathani",
     slug: "pakistani-pathani",
-    image:
-      "https://images.unsplash.com/photo-1484329089093-60b9a2b5b172?auto=format&fit=crop&w=900&q=80&fm=webp"
+    image: pakistaniPathaniImg
   },
   {
     id: 10,
     name: "Kids Thobes",
     slug: "kids-thobes",
-    image:
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80&fm=webp"
+    image: kidsThobesImg
   },
   {
     id: 11,
     name: "Middle East Perfumes & Attars",
     slug: "perfumes-attars",
-    image:
-      "https://images.unsplash.com/photo-1523293836414-7a2a3f2c5b27?auto=format&fit=crop&w=900&q=80&fm=webp"
+    image: perfumesAttarsImg
   },
   {
     id: 12,
     name: "Hajj & Umrah Essentials",
     slug: "hajj-umrah",
-    image:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80&fm=webp"
+    image: hajjUmrahEssentialsImg
   }
 ];
 
@@ -91,7 +95,7 @@ export const products = [
     name: "Noor Luxe Abaya",
     price: 3499,
     image:
-      "https://images.unsplash.com/photo-1503342452485-86b7f54527ef?auto=format&fit=crop&w=900&q=80&fm=webp",
+      "https://www.bing.com/images/search?view=detailV2&ccid=KLTCzWkn&id=A8EF20A814324A870DCABE8684A5835596105131&thid=OIP.KLTCzWkn1-vbH4IiDrDwlgHaLH&mediaurl=https%3a%2f%2fi.pinimg.com%2foriginals%2f79%2f84%2f99%2f798499164323057b751448ef251b29a7.jpg&exph=4472&expw=2981&q=abayas+beautiful+images+for+website+making&FORM=IRPRST&ck=2AA20DC57B17DEB025A650330233E269&selectedIndex=9&itb=0&qpvt=abayas+beautiful+images+for+website+making",
     category: "Abayas",
     rating: 4.8
   },
@@ -184,33 +188,27 @@ export const testimonials = [
 export const gallery = [
   {
     id: 1,
-    image:
-      "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80&fm=webp"
+    image: hijabsImg
   },
   {
     id: 2,
-    image:
-      "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=800&q=80&fm=webp"
+    image: stolesImg
   },
   {
     id: 3,
-    image:
-      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80&fm=webp"
+    image: hijabAccessoriesImg
   },
   {
     id: 4,
-    image:
-      "https://images.unsplash.com/photo-1503341338985-c0477be52513?auto=format&fit=crop&w=800&q=80&fm=webp"
+    image: kidsThobesImg
   },
   {
     id: 5,
-    image:
-      "https://images.unsplash.com/photo-1467043237213-65f2da53396f?auto=format&fit=crop&w=800&q=80&fm=webp"
+    image: perfumesAttarsImg
   },
   {
     id: 6,
-    image:
-      "https://images.unsplash.com/photo-1484329089093-60b9a2b5b172?auto=format&fit=crop&w=800&q=80&fm=webp"
+    image: pakistaniPathaniImg
   }
 ];
 
@@ -219,22 +217,19 @@ export const ramadanCollections = [
     id: 1,
     title: "Ramzan Abaya Collection",
     description: "Fluid silhouettes with gold-thread detailing.",
-    image:
-      "https://images.unsplash.com/photo-1503342452485-86b7f54527ef?auto=format&fit=crop&w=1200&q=80&fm=webp"
+    image: ramzanAbayaCollectionImg
   },
   {
     id: 2,
     title: "Luxury Hijab Collection",
     description: "Silk blends in emerald, sand, and midnight.",
-    image:
-      "https://images.unsplash.com/photo-1503341338985-c0477be52513?auto=format&fit=crop&w=1200&q=80&fm=webp"
+    image: luxuryHijabCollectionImg
   },
   {
     id: 3,
     title: "Umrah Essentials",
     description: "Curated travel kits for sacred journeys.",
-    image:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80&fm=webp"
+    image: umrahEssentialsImg
   }
 ];
 
